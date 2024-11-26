@@ -1,7 +1,7 @@
 public class Node {
-    private final Node left;
-    private final Node right;
-    private final Employee value;
+    private Node left;
+    private Node right;
+    private Employee value;
 
     public Node (Node left, Node right, Employee value) {
         this.left = left;
@@ -21,4 +21,15 @@ public class Node {
         return value;
     }
 
+    public void setLeft(Node node) {
+        left = node;
+    }
+
+    public void setRight(Node node) {
+        right = node;
+    }
+
+    public void setValue(Employee node) {
+        value = node;
+    }
 }

@@ -18,6 +18,7 @@ public class Client {
                 employees.add(employee);
             } // close while loop
             fileReader.close();
+            EmployeeOperations operations = new EmployeeOperations();
         } catch(FileNotFoundException e) {
             System.err.println(e.getMessage());
         }//close try catch
