@@ -1,26 +1,24 @@
-import java.util.List;
+import java.util.*;
 
 public class EmployeeOperations {
     private Node constructHelper(List<Employee> employees, int startIndex, int endIndex) {
         if (startIndex > endIndex) {
-            return null;//base case
-        }
-        if (startIndex == endIndex) {
-            return new Node (null, null, employees.getFirst());
+            return null; // Base case: no elements to process
         }
 
-        int middleIndex = startIndex + (endIndex-startIndex) / 2;
+        int middleIndex = startIndex + (endIndex - startIndex) / 2;
 
         Node root = new Node(null, null, employees.get(middleIndex));
 
-        root.setLeft(constructHelper(employees, startIndex, middleIndex-1));
-        root.setRight(constructHelper(employees, middleIndex+1, endIndex));
+        // Recursively construct left and right subtrees
+        root.setLeft(constructHelper(employees, startIndex, middleIndex - 1));
+        root.setRight(constructHelper(employees, middleIndex + 1, endIndex));
 
         return root;
     }
 
     public Node constructBalancedEmployeeBST(List<Employee> employeeList) {
-        return constructHelper(employeeList, 0, employeeList.size()-1);
+        return constructHelper(employeeList, 0, employeeList.size() - 1);
     }
 
     public Node searchRetire(Node root) {
@@ -48,9 +46,15 @@ public class EmployeeOperations {
         } else if (employee.getId() > root.getValue().getId()) {
             root.setRight(removeRetire(root.getRight(), employee));
         } else {
-            Node minimum = this.getMinimum(root.getRight());
-            root.setValue(minimum.getValue());
-            root.setRight(removeRetire(root.getRight(), minimum.getValue()));
+            if (root.getLeft() == null) {
+                return root.getRight();
+            } else if (root.getRight() == null) {
+                return root.getLeft();
+            } else {
+                Node minimum = this.getMinimum(root.getRight());
+                root.setValue(minimum.getValue());
+                root.setRight(removeRetire(root.getRight(), minimum.getValue()));
+            }
         }
 
         return root;
@@ -64,8 +68,20 @@ public class EmployeeOperations {
     }
 
     public void insertNewHire(Node root, Employee e) {
-        if (root.getRight() == null) {
-            root.setRight(new Node(null, null, e));
+        if (e.getId() < root.getValue().getId()) {
+            // Insert in the left subtree
+            if (root.getLeft() == null) {
+                root.setLeft(new Node(null, null, e));
+            } else {
+                insertNewHire(root.getLeft(), e);
+            }
+        } else {
+            // Insert in the right subtree
+            if (root.getRight() == null) {
+                root.setRight(new Node(null, null, e));
+            } else {
+                insertNewHire(root.getRight(), e);
+            }
         }
     }
 
@@ -81,4 +97,41 @@ public class EmployeeOperations {
         }
         return search(root.getRight(), id);
     }
+
+    public void inorderTraversal(Node root) {
+        if (root == null) {
+            return;
+        }
+        inorderTraversal(root.getLeft());
+        System.out.println(root.getValue().toString());
+        inorderTraversal(root.getRight());
+    }
+
+    public void levelOrderTraversal(Node root) {
+        if (root == null) {
+            System.out.println("The tree is empty.");
+            return;
+        }
+        Deque<Node> dq = new ArrayDeque<>();
+        dq.add(root);
+        int level = 0;
+        while (!dq.isEmpty()) {
+            int size  = dq.size();
+            System.out.println("----------------New Level-------------");
+            System.out.println("Level: " + level + " has " + size);
+            while (size-- > 0) {
+                Node current = dq.pollFirst();
+                System.out.println(current.getValue().toString());
+                Node left = current.getLeft();
+                Node right = current.getRight();
+                if (left != null) {
+                    dq.add(left);
+                }
+                if (right != null) {
+                    dq.add(right);
+                }
+            }//close inner while
+            ++level;
+        }//close outer while
+    }//close levelOrder
 }
